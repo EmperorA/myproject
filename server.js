@@ -2,14 +2,12 @@ const express = require("express");
 const path = require("path");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
-const hbs = require("hbs");
 let ejs = require("ejs");
-const Product = require("./models/productDb");
 const { addProduct, getAllProduct } = require("./models/product.mongo");
+const { addCategory, getAllCategory } = require("./models/category.mongo");
+const { getAllOffer, addOffer } = require("./models/offers.mongo");
 
 const app = express();
-
-// hbs.registerPartials(__dirname + "/views/partials");
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
@@ -21,27 +19,20 @@ const MONGO_URL =
 
 app.use("/", express.static(path.join(__dirname, "public")));
 app.use(express.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 
-app.get("/", (req, res) => {
-  res.render("index");
-});
-app.get("/index", async (req, res) => {
-  let testing = await getAllProduct();
-
-  let data = { sam: "good" };
-  console.log(data);
-  await res.render("index", { testing });
+app.get("/", async (req, res) => {
+  let products = await getAllProduct();
+  let categories = await getAllCategory();
+  let offers = await getAllOffer();
+  res.render("index", { products, categories, offers });
 });
 
 app.get("/shop.html", (req, res) => {
   res.render("Shop");
 });
-app.get("/detail.html", async (req, res) => {
-  Product.find({}, (err, products) => {
-    res.render("detail", {
-      productList: products,
-    });
-  });
+app.get("/detail.html", (req, res) => {
+  res.render("detail");
 });
 app.get("/cart.html", (req, res) => {
   res.render("cart");
@@ -52,34 +43,35 @@ app.get("/checkout.html", (req, res) => {
 app.get("/contact.html", async (req, res) => {
   res.render("contact");
 });
-app.post("/manageProduct", async (res, req) => {
-  await addProduct(req.body.data);
+app.post("/manageOffer", async (req, res) => {
+  await addOffer(req.body);
 
-  res.render("index");
+  res.redirect("contact");
 });
-// app.get("/contact.html", async (res, req) => {
-//   Product.find((err, products) => {
-//    console.log(products)
-//   })
-// })
+app.post("/manageCategory", async (req, res) => {
+  await addCategory(req.body);
 
-app.post("/product", async (req, res) => {
-  let doc = new Product(data);
+  res.redirect("contact");
+});
+app.post("/manageProduct", async (req, res) => {
+  await addProduct(req.body);
 
-  let data = {
-    productName: "test product",
-    productDescription: " this product is a test ",
-    productPrice: "200",
-  };
-
-  console.log(doc);
-  await doc.save();
-  res.send(doc);
+  res.redirect("contact");
 });
 
-app.get("/product", (req, res) => {
-  res.render("");
-});
+// app.post("/product", async (req, res) => {
+//   let doc = new Product(data);
+
+//   let data = {
+//     productName: "test product",
+//     productDescription: " this product is a test ",
+//     productPrice: "200",
+//   };
+
+//   console.log(doc);
+//   await doc.save();
+//   res.send(doc);
+// });
 
 mongoose.connection.on("open", () => {
   console.log("MongoDB connecting ready!");
