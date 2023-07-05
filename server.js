@@ -2,10 +2,11 @@ const express = require("express");
 const path = require("path");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
-let ejs = require("ejs");
+const ejs = require("ejs");
 const { addProduct, getAllProduct } = require("./models/product.mongo");
 const { addCategory, getAllCategory } = require("./models/category.mongo");
 const { getAllOffer, addOffer } = require("./models/offers.mongo");
+const { getAllReview, addReview } = require("./models/review.mongo");
 
 const app = express();
 
@@ -31,8 +32,9 @@ app.get("/", async (req, res) => {
 app.get("/shop.html", (req, res) => {
   res.render("Shop");
 });
-app.get("/detail.html", (req, res) => {
-  res.render("detail");
+app.get("/detail.html", async (req, res) => {
+  let reviews = await getAllReview();
+  res.render("detail", { reviews });
 });
 app.get("/cart.html", (req, res) => {
   res.render("cart");
@@ -58,20 +60,10 @@ app.post("/manageProduct", async (req, res) => {
 
   res.redirect("contact");
 });
-
-// app.post("/product", async (req, res) => {
-//   let doc = new Product(data);
-
-//   let data = {
-//     productName: "test product",
-//     productDescription: " this product is a test ",
-//     productPrice: "200",
-//   };
-
-//   console.log(doc);
-//   await doc.save();
-//   res.send(doc);
-// });
+app.post("/detail.html", async (req, res) => {
+  await addReview(req.body);
+  res.render("detail");
+});
 
 mongoose.connection.on("open", () => {
   console.log("MongoDB connecting ready!");
