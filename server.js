@@ -3,10 +3,12 @@ const path = require("path");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
+// const router = require("./auth/router");
 const { addProduct, getAllProduct } = require("./models/product.mongo");
 const { addCategory, getAllCategory } = require("./models/category.mongo");
 const { getAllOffer, addOffer } = require("./models/offers.mongo");
 const { getAllReview, addReview } = require("./models/review.mongo");
+const { addItemToCart, getAllCart } = require("./cart/cart.controllers");
 
 const app = express();
 
@@ -21,6 +23,7 @@ const MONGO_URL =
 app.use("/", express.static(path.join(__dirname, "public")));
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use("/api/auth", require("./auth/router"));
 
 app.get("/", async (req, res) => {
   let products = await getAllProduct();
@@ -36,8 +39,9 @@ app.get("/detail.html", async (req, res) => {
   let reviews = await getAllReview();
   res.render("detail", { reviews });
 });
-app.get("/cart.html", (req, res) => {
-  res.render("cart");
+app.get("/cart.html", async (req, res) => {
+  let carts = await getAllCart();
+  res.render("cart", { carts });
 });
 app.get("/checkout.html", (req, res) => {
   res.render("checkout");
@@ -64,6 +68,10 @@ app.post("/detail.html", async (req, res) => {
   await addReview(req.body);
   res.render("detail");
 });
+app.post("/cart.html", async (req, res) => {
+  await addItemToCart();
+  res.render("cart");
+});
 
 mongoose.connection.on("open", () => {
   console.log("MongoDB connecting ready!");
@@ -75,6 +83,13 @@ mongoose.connection.on("error", (err) => {
 
 mongoose.connect(MONGO_URL);
 
-app.listen(PORT, () => {
-  console.log(`listening on ${PORT} ...`);
+// app.listen(PORT, () => {
+//   console.log(`listening on ${PORT} ...`);
+// });
+const server = app.listen(PORT, () =>
+  console.log(`Server Connected to port ${PORT}`)
+);
+process.on("unhandledRejection", (err) => {
+  console.log(`An error occurred: ${err.message}`);
+  server.close(() => process.exit(1));
 });
