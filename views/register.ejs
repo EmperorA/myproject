@@ -1,42 +1,24 @@
+<%- include('partials/header'); -%>
 
-
-  <%- include('header'); -%>
-  
-  <body>
-    <div>
+<body>
+  <%- include('partials/topbar'); -%>
+  <div>
     <h1>Register Page</h1>
-    <form>
-      <div class="error" style="background-color: red;"></div>
+    <form action="/api/auth/register" method="post">
+      <div class="error" style="background-color: red"></div>
       <br />
       <label for="username">Username</label><br />
-      <input type="text" id="username" required /><br />
+      <input type="text" id="username" name="username" required /><br />
       <label for="password">Password</label><br />
-      <input type="password" id="password" required /><br />
+      <input type="password" id="password" name="password" required /><br />
       <input type="submit" value="register" /><br />
     </form>
     <a href="/login">Already registered? Login</a>
-</div>
-      <!-- Footer Start -->
-      <%- include('footer'); -%>
-      <!-- Footer End -->
-  
-  
-      <!-- Back to Top -->
-      <a href="#" class="btn btn-primary back-to-top"><i class="fa fa-angle-double-up"></i></a>
-  
-  
-      <!-- JavaScript Libraries -->
-      <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-      <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
-      <script src="lib/easing/easing.min.js"></script>
-      <script src="lib/owlcarousel/owl.carousel.min.js"></script>
-  
-      <!-- Contact Javascript File -->
-      <script src="mail/jqBootstrapValidation.min.js"></script>
-      <script src="mail/contact.js"></script>
-  
-      <!-- Template Javascript -->
-      <script src="js/main.js"></script>
-  </body>
-  
-  </html>
+    <a href="/auth/gooogle">Sign in with Google</a>
+  </div>
+  <!-- Footer Start -->
+  <%- include('partials/footer'); -%>
+  <!-- Footer End -->
+
+  <%- include('libraries'); -%>
+</body>
