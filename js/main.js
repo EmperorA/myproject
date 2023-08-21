@@ -83,20 +83,20 @@
   });
 
   // Product Quantity
-  $(".quantity button").on("click", function () {
-    var button = $(this);
-    var oldValue = button.parent().parent().find("input").val();
-    if (button.hasClass("btn-plus")) {
-      var newVal = parseFloat(oldValue) + 1;
-    } else {
-      if (oldValue > 0) {
-        var newVal = parseFloat(oldValue) - 1;
-      } else {
-        newVal = 0;
-      }
-    }
-    button.parent().parent().find("input").val(newVal);
-  });
+  // $(".quantity button").on("click", function () {
+  //   var button = $(this);
+  //   var oldValue = button.parent().parent().find("input").val();
+  //   if (button.hasClass("btn-plus")) {
+  //     var newVal = parseFloat(oldValue) + 1;
+  //   } else {
+  //     if (oldValue > 0) {
+  //       var newVal = parseFloat(oldValue) - 1;
+  //     } else {
+  //       newVal = 0;
+  //     }
+  //   }
+  //   button.parent().parent().find("input").val(newVal);
+  // });
 })(jQuery);
 
 // register functionality
@@ -225,40 +225,5 @@ deleteUser.forEach((button, i) => {
       }`);
     }
     location.assign("/admin");
-  });
-});
-
-const addToCartForms = document.getElementsByClassName("fa fa-shopping-cart");
-
-addToCartForms.forEach((form) => {
-  form.addEventListener("submit", (event) => {
-    event.preventDefault();
-    const productId = form.elements.productId.value;
-
-    // const cart = {
-    //   productId: productId,
-    //   quantity: quantity,
-    //   price: productDetails.price,
-    //   total: parseInt(productDetails.price * quantity)
-    // }
-
-    fetch("/cart.html", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ productId }),
-    })
-      .then((response) => {
-        if (response.ok) {
-          alert("Product added to cart!");
-        } else {
-          alert("Error adding product to cart.");
-        }
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-        alert("Error adding product to cart.");
-      });
   });
 });

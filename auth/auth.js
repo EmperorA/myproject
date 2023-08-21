@@ -6,15 +6,15 @@ const jwt = require("jsonwebtoken");
 const jwtSecret = process.env.JWTSECRET;
 const LocalStrategy = require("passport-local");
 
-passport.serializeUser((user, done) => {
-  done(null, user.id);
-});
-passport.deserializeUser((id, done) => {
-  User.findById(id).then((user) => {
-    done(null, user);
-  });
-  // done(null, id);
-});
+// passport.serializeUser((user, done) => {
+//   done(null, user.id);
+// });
+// passport.deserializeUser((id, done) => {
+//   User.findById(id).then((user) => {
+//     done(null, user);
+//   });
+//   // done(null, id);
+// });
 
 // const data = {
 //   usernameField: "username",
@@ -98,6 +98,7 @@ exports.login = async (req, res, next) => {
               expiresIn: maxAge, // 3hrs in sec
             }
           );
+
           res.cookie("jwt", token, {
             httpOnly: true,
             maxAge: maxAge * 1000, // 3hrs in ms

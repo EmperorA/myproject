@@ -21,7 +21,7 @@
 
           <ul class="dropdown-menu">
             <% if(locals.isLoggedIn){ %>
-            <li><a href="/user">User account</a></li>
+            <li><a href="/">Hi</a></li>
             <li role="separator" class="divider"></li>
             <li><a href="/log out"> log out</a></li>
             <%} else { %>
@@ -67,9 +67,7 @@
           <span
             class="badge text-dark border border-dark rounded-circle"
             style="padding-bottom: 2px"
-          >
-            <% if (typeof cart !== "undefined"){ %> <%= cart.length %> <% }
-            else{ %> 0 <% } %>
+            >0
           </span>
         </a>
         <a href="/cart" class="btn px-0 ml-2">
@@ -77,7 +75,9 @@
           <span
             class="badge text-dark border border-dark rounded-circle"
             style="padding-bottom: 2px"
-            >0</span
+          >
+            <% if (typeof cart !== "undefined"){ %> <%= cart.length %> <% }
+            else{ %> 0 <% } %></span
           >
         </a>
       </div>

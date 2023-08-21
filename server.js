@@ -3,9 +3,8 @@ const session = require("express-session");
 const path = require("path");
 const flash = require("connect-flash");
 const bodyParser = require("body-parser");
-const cors = require("cors");
+
 const cookieParser = require("cookie-parser");
-// const logger = require("morgan");
 
 const { query } = require("express-validator");
 const { mongoConnect } = require("./services/mongo");
@@ -14,7 +13,6 @@ const { addCategory, getAllCategory } = require("./models/category.mongo");
 const { getAllOffer, addOffer } = require("./models/offers.mongo");
 const { getAllReview, addReview } = require("./models/review.mongo");
 
-// const isLoggedIn = require("./config/logged");
 const { sendMail } = require("./auth/sendMail");
 const { adminAuth, userAuth } = require("./middleware/auth");
 const cart = require("./config/cart.router");
@@ -29,17 +27,22 @@ app.set("views", path.join(__dirname, "views"));
 
 // app.use(cors({ origin: "*" }));
 
+// app.get("*", (req, res, next) => {
+//   // res.locals.cart = req.session.cart;
+//   res.locals.user = req.user || null;
+// });
+
 app.use("/", express.static(path.join(__dirname, "public")));
 
 //global errors variables
 app.locals.errors = null;
 
 app.use(express.json());
-// app.use(logger("dev"));
+
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(query());
 app.use(cookieParser());
-
+app.use("/api/auth", require("./auth/router"));
 app.use(
   session({
     secret: "keyboard cat",
@@ -50,7 +53,6 @@ app.use(
 );
 
 app.use("/cart", cart);
-app.use("/api/auth", require("./auth/router"));
 
 //express messages miiddleware
 
@@ -148,14 +150,7 @@ app.post("/detail.html", async (req, res) => {
   await addReview(req.body);
   res.render("detail");
 });
-// app.post("/cart.html", async (req, res) => {
-//   await addItemToCart(userID, productID);
-//   res.redirect("cart");
-// });
-// app.get("/cart.html", async (req, res) => {
-//   let carts = await getAllCart();
-//   res.render("cart", { carts });
-// });
+
 app.post("/sendMessage", async (req, res) => {
   const { name, email, subject, message } = req.body;
 
