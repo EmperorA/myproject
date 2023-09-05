@@ -1,8 +1,14 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
+const passportLocalMongoose = require("passport-local-mongoose");
 
 const UserSchema = new mongoose.Schema({
   username: {
+    type: String,
+    unique: true,
+    required: true,
+  },
+  email: {
     type: String,
     unique: true,
     required: true,
@@ -12,10 +18,8 @@ const UserSchema = new mongoose.Schema({
     minlength: 6,
     required: true,
   },
-  role: {
-    type: String,
-    default: "Basic",
-    required: true,
+  admin: {
+    type: Number,
   },
 });
 UserSchema.methods.encryptPassword = (password) => {
@@ -25,4 +29,5 @@ UserSchema.methods.encryptPassword = (password) => {
 UserSchema.methods.validPassword = (password) => {
   return bcrypt.compareSync(password, this.password);
 };
+UserSchema.plugin(passportLocalMongoose);
 module.exports = mongoose.model("User", UserSchema);

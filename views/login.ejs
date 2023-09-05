@@ -6,7 +6,7 @@
   <%- include('partials/topbar'); -%>
   <div>
     <h1>Login Page</h1>
-    <form action="/api/auth/login" method="post">
+    <form action="/users/login" method="post">
       <div ></div>
       <br />
       <label for="username">Username</label><br />
@@ -15,8 +15,8 @@
       <input type="password" id="password" name="password" required /><br />
       <input type="submit" value="login" /><br />
     </form>
-    <a href="/auth/google">Sign in with Google</a>
-    <a href="/register">Don't have an account? Register</a>
+    <a href="/auth/google">Sign in with Google</a> <br>
+    <a href="/users/register">Don't have an account? Register</a>
 </div>
     <!-- Footer Start -->
     <%- include('./partials/footer'); -%>

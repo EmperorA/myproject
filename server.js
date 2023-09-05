@@ -3,8 +3,8 @@ const session = require("express-session");
 const path = require("path");
 const flash = require("connect-flash");
 const bodyParser = require("body-parser");
-
-const cookieParser = require("cookie-parser");
+const passport = require("passport");
+// const cookieParser = require("cookie-parser");
 
 const { query } = require("express-validator");
 const { mongoConnect } = require("./services/mongo");
@@ -15,7 +15,6 @@ const { getAllReview, addReview } = require("./models/review.mongo");
 
 const { sendMail } = require("./auth/sendMail");
 const { adminAuth, userAuth } = require("./middleware/auth");
-const cart = require("./config/cart.router");
 
 require("dotenv").config();
 const app = express();
@@ -25,49 +24,52 @@ const PORT = process.env.PORT || 3000;
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
-// app.use(cors({ origin: "*" }));
-
-// app.get("*", (req, res, next) => {
-//   // res.locals.cart = req.session.cart;
-//   res.locals.user = req.user || null;
-// });
-
 app.use("/", express.static(path.join(__dirname, "public")));
 
 //global errors variables
 app.locals.errors = null;
 
 app.use(express.json());
-
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(query());
-app.use(cookieParser());
-app.use("/api/auth", require("./auth/router"));
+// app.use(cookieParser());
+
 app.use(
   session({
     secret: "keyboard cat",
     resave: false,
-    saveUninitialized: true,
-    cookie: { secure: false },
+    saveUninitialized: false,
+    cookie: {
+      path: "/",
+      httpOnly: true,
+      secure: false,
+      maxAge: 1 * 60 * 60 * 1000,
+    },
   })
 );
 
-app.use("/cart", cart);
+app.get("*", (req, res, next) => {
+  res.locals.cart = req.session.cart;
+  res.locals.user = req.user || null;
+  next();
+});
 
-//express messages miiddleware
+// express messages miiddleware
+app.use(flash());
+app.use((req, res, next) => {
+  res.locals.messages = require("express-messages")(req, res);
+  next();
+});
 
-// app.use(require("connect-flash")());
-// app.use((req, res, next) => {
-//   res.locals.messages = require("express-messages")(req, res);
-//   next();
-// });
+//passport middleware
+app.use(passport.initialize());
+app.use(passport.session());
 
-// app.use("/:userId", cart);
-// app.use(function (req, res, next) {
-//   res.locals.login = req.isAuthenticated();
-//   res.locals.session = req.session;
-//   next();
-// });
+app.use(function (req, res, next) {
+  res.locals.login = req.isAuthenticated();
+  res.locals.session = req.session;
+  next();
+});
 // catch 404 and forward to error handler
 // app.use(function (req, res, next) {
 //   const err = new Error("Not Found");
@@ -76,15 +78,25 @@ app.use("/cart", cart);
 // });
 
 // error handler
-// app.use(function (err, req, res, next) {
-//   // set locals, only providing error in development
-//   res.locals.message = err.message;
-//   res.locals.error = req.app.get("env") === "development" ? err : {};
+app.use(function (err, req, res, next) {
+  // set locals, only providing error in development
+  res.locals.message = err.message;
+  res.locals.error = req.app.get("env") === "development" ? err : {};
 
-//   // render the error page
-//   res.status(err.status || 500);
-//   res.render("error");
-// });
+  // render the error page
+  res.status(err.status || 500);
+  res.render("error");
+});
+
+// set routes
+
+const cart = require("./routes/cart");
+const users = require("./routes/users");
+const search = require("./routes/search");
+
+app.use("/cart", cart);
+app.use("/users", users);
+app.use("/search", search);
 
 app.get("/", async (req, res) => {
   let products = await getAllProduct();
@@ -108,23 +120,7 @@ app.get("/contact.html", async (req, res) => {
   res.render("contact");
 });
 app.get("/cart", async (req, res) => {
-  res.render("cart", { cart });
-});
-app.get("/register", (req, res) => {
-  res.render("register");
-});
-app.get("/login", (req, res) => {
-  res.render("login");
-});
-
-app.get("/admin", adminAuth, (req, res) => {
-  res.render("admin");
-});
-app.get("/getUsers", adminAuth, (req, res) => {
-  res.render("admin");
-});
-app.get("/basic", userAuth, (req, res) => {
-  res.render("user");
+  res.render("cart", { cart: req.session.cart });
 });
 
 app.get("/logout", (req, res) => {
@@ -165,18 +161,16 @@ app.post("/sendMessage", async (req, res) => {
   // }
 
   await sendMail(name, email, subject, message);
-  // .json({ message: 'Email sent successfully!' })
+  res.flash({ message: "Email sent successfully!" });
 
   res.render("contact");
 });
 
-// app.get("*", (req, res, next) => {
-//   res.locals.cart = req.session.cart;
-//   next();
-// });
+// require("./auth/router");
 
-require("./auth/router");
-require("./config/passport")(app);
+// passport config
+require("./config/passport")(passport);
+require("./config/google.passport")(app);
 
 async function startServer() {
   await mongoConnect();

@@ -227,3 +227,53 @@ deleteUser.forEach((button, i) => {
     location.assign("/admin");
   });
 });
+
+//search functionality
+document.addEventListener("DOMContentLoaded", function () {
+  const searchForm = document.getElementById("search-form");
+  const searchModal = document.getElementById("search-modal");
+  const searchResults = document.getElementById("search-results");
+
+  searchForm.addEventListener("submit", function (event) {
+    event.preventDefault();
+
+    const searchQuery = document.getElementById("search-query").value;
+    console.log("Search Query:", searchQuery);
+
+    // Fetch search results from the server
+    fetch(`/search?q=${encodeURIComponent(searchQuery)}`)
+      .then((response) => response.json())
+      .then((data) => {
+        // Build HTML for search results
+        const resultsHtml = data.results
+          .map(
+            (result) => `
+          <div>
+            <h2>${result.title}</h2>
+            <p>${result.description}</p>
+          </div>
+        `
+          )
+          .join("");
+
+        searchResults.innerHTML = resultsHtml;
+        searchModal.style.display = "block";
+      })
+      .catch((error) => {
+        console.error("Fetch Error:", error);
+      });
+  });
+
+  // Close the modal when clicking the close button
+  const closeButton = searchModal.querySelector(".close");
+  closeButton.addEventListener("click", function () {
+    searchModal.style.display = "none";
+  });
+
+  // Close the modal when clicking outside the modal content
+  window.addEventListener("click", function (event) {
+    if (event.target === searchModal) {
+      searchModal.style.display = "none";
+    }
+  });
+});

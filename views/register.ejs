@@ -4,17 +4,30 @@
   <%- include('partials/topbar'); -%>
   <div>
     <h1>Register Page</h1>
-    <form action="/api/auth/register" method="post">
+    <form action="/users/register" method="post">
       <div class="error" style="background-color: red"></div>
       <br />
       <label for="username">Username</label><br />
       <input type="text" id="username" name="username" required /><br />
+      <label for="Email">Email</label><br />
+      <input type="text" id="email" name="email" required /><br />
       <label for="password">Password</label><br />
       <input type="password" id="password" name="password" required /><br />
-      <input type="submit" value="register" /><br />
+      <label for="password">Confirm Password</label><br />
+      <input type="password2" id="password2" name="password2" required /><br />
+      <input type="submit" value="Register" /><br />
     </form>
-    <a href="/login">Already registered? Login</a>
-    <a href="/auth/gooogle">Sign in with Google</a>
+    <a
+      class="btn btn-outline-light py-2 px-4 mt-3 animate__animated animate__fadeInUp"
+      href="/users/login"
+      >Already registered? Login
+    </a>
+    <br />
+    <a
+      class="btn btn-outline-light py-2 px-4 mt-3 animate__animated animate__fadeInUp"
+      href="/auth/gooogle"
+      >Sign in with Google</a
+    >
   </div>
   <!-- Footer Start -->
   <%- include('partials/footer'); -%>

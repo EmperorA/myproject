@@ -20,16 +20,20 @@
           </button>
 
           <ul class="dropdown-menu">
-            <% if(locals.isLoggedIn){ %>
-            <li><a href="/">Hi</a></li>
+            <% if (user) { %>
+            <li>
+              <a href="/users/logout">Hi <%= user.username %> (log out)</a>
+            </li>
             <li role="separator" class="divider"></li>
-            <li><a href="/log out"> log out</a></li>
-            <%} else { %>
 
-            <li><a href="/login">Sign in</a></li>
+            <% } else { %>
+            <li><a href="/users/login">Sign in</a></li>
+            <li><a href="/users/register"> Sign up</a></li>
+            <% } %> <% if(user && user.admin == 1){ %>
+            <li><a href="/admin/pages"> Admin Area</a></li>
+            <li role="separator" class="divider"></li>
 
-            <li><a href="/register"> Sign up</a></li>
-            <% } %>
+            <%} %>
           </ul>
         </div>
         <div class="btn-group mx-2">
@@ -83,30 +87,49 @@
       </div>
     </div>
   </div>
+
+  <div class="messages">
+    <%- messages("messages", locals) %> <% if(errors) {%> <%
+    errors.forEach(error => { %>
+    <div class="alert alert-danger"><%= error.msg %></div>
+
+    <% }) %> <% } %>
+  </div>
+
   <div class="row align-items-center bg-light py-3 px-xl-5 d-none d-lg-flex">
     <div class="col-lg-4">
-      <a href="" class="text-decoration-none">
-        <span class="h1 text-uppercase text-primary bg-dark px-2">Multi</span>
+      <a href="/" class="text-decoration-none">
+        <span class="h1 text-uppercase text-primary bg-dark px-2">Aux</span>
         <span class="h1 text-uppercase text-dark bg-primary px-2 ml-n1"
           >Shop</span
         >
       </a>
     </div>
     <div class="col-lg-4 col-6 text-left">
-      <form action="">
+      <form action="/search" method="get">
         <div class="input-group">
           <input
             type="text"
+            id="search-query"
             class="form-control"
             placeholder="Search for products"
           />
           <div class="input-group-append">
-            <span class="input-group-text bg-transparent text-primary">
+            <button
+              type="submit"
+              class="input-group-text bg-transparent text-primary"
+            >
               <i class="fa fa-search"></i>
-            </span>
+            </button>
           </div>
         </div>
       </form>
+      <div id="search-modal" class="modal">
+        <div class="modal-content">
+          <span class="close">&times;</span>
+          <div id="search-results"></div>
+        </div>
+      </div>
     </div>
     <div class="col-lg-4 col-6 text-right">
       <p class="m-0">Customer Service</p>
@@ -181,8 +204,8 @@
         >
           <div class="navbar-nav mr-auto py-0">
             <a href="/" class="nav-item nav-link active">Home</a>
-            <a href="shop.html" class="nav-item nav-link">Shop</a>
-            <a href="detail.html" class="nav-item nav-link">Shop Detail</a>
+            <a href="/shop.html" class="nav-item nav-link">Shop</a>
+            <a href="/detail.html" class="nav-item nav-link">Shop Detail</a>
             <div class="nav-item dropdown">
               <a
                 href="#"
@@ -192,10 +215,10 @@
               ></a>
               <div class="dropdown-menu bg-primary rounded-0 border-0 m-0">
                 <a href="/cart" class="dropdown-item">Shopping Cart</a>
-                <a href="checkout.html" class="dropdown-item">Checkout</a>
+                <a href="/checkout.html" class="dropdown-item">Checkout</a>
               </div>
             </div>
-            <a href="contact.html" class="nav-item nav-link">Contact</a>
+            <a href="/contact.html" class="nav-item nav-link">Contact</a>
           </div>
           <div class="navbar-nav ml-auto py-0 d-none d-lg-block">
             <a href="" class="btn px-0">
