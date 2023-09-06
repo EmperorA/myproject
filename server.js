@@ -4,7 +4,7 @@ const path = require("path");
 const flash = require("connect-flash");
 const bodyParser = require("body-parser");
 const passport = require("passport");
-// const cookieParser = require("cookie-parser");
+const cookieParser = require("cookie-parser");
 
 const { query } = require("express-validator");
 const { mongoConnect } = require("./services/mongo");
@@ -14,7 +14,6 @@ const { getAllOffer, addOffer } = require("./models/offers.mongo");
 const { getAllReview, addReview } = require("./models/review.mongo");
 
 const { sendMail } = require("./auth/sendMail");
-const { adminAuth, userAuth } = require("./middleware/auth");
 
 require("dotenv").config();
 const app = express();
@@ -32,7 +31,7 @@ app.locals.errors = null;
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(query());
-// app.use(cookieParser());
+app.use(cookieParser());
 
 app.use(
   session({
@@ -48,12 +47,10 @@ app.use(
   })
 );
 
-app.get("*", (req, res, next) => {
-  res.locals.cart = req.session.cart;
-  res.locals.user = req.user || null;
-  next();
-});
-
+// app.use((req, res, next) => {
+//   console.log(`Session ID: ${req.session.id}`);
+//   next();
+// });
 // express messages miiddleware
 app.use(flash());
 app.use((req, res, next) => {
@@ -65,11 +62,12 @@ app.use((req, res, next) => {
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use(function (req, res, next) {
-  res.locals.login = req.isAuthenticated();
-  res.locals.session = req.session;
+app.use("*", (req, res, next) => {
+  res.locals.cart = req.session.cart;
+  res.locals.user = req.user || null;
   next();
 });
+
 // catch 404 and forward to error handler
 // app.use(function (req, res, next) {
 //   const err = new Error("Not Found");
@@ -123,10 +121,6 @@ app.get("/cart", async (req, res) => {
   res.render("cart", { cart: req.session.cart });
 });
 
-app.get("/logout", (req, res) => {
-  res.cookie("jwt", "", { maxAge: "1" });
-  res.redirect("/");
-});
 app.post("/manageOffer", async (req, res) => {
   await addOffer(req.body);
 
@@ -161,8 +155,7 @@ app.post("/sendMessage", async (req, res) => {
   // }
 
   await sendMail(name, email, subject, message);
-  res.flash({ message: "Email sent successfully!" });
-
+  req.flash({ message: "Email sent successfully!" });
   res.render("contact");
 });
 

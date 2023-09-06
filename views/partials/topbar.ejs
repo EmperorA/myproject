@@ -10,7 +10,12 @@
     </div>
     <div class="col-lg-6 text-center text-lg-right">
       <div class="d-inline-flex align-items-center">
+        <% if(user && user.admin == 0){ %>
         <div class="btn-group">
+          <a href="/users/logout"> Hi <%= user.username %> (log out)</a>
+        </div>
+        <%} else { %>
+        <div>
           <button
             type="button"
             class="btn btn-sm btn-light dropdown-toggle"
@@ -20,22 +25,29 @@
           </button>
 
           <ul class="dropdown-menu">
-            <% if (user) { %>
-            <li>
-              <a href="/users/logout">Hi <%= user.username %> (log out)</a>
-            </li>
-            <li role="separator" class="divider"></li>
-
-            <% } else { %>
             <li><a href="/users/login">Sign in</a></li>
             <li><a href="/users/register"> Sign up</a></li>
-            <% } %> <% if(user && user.admin == 1){ %>
-            <li><a href="/admin/pages"> Admin Area</a></li>
-            <li role="separator" class="divider"></li>
-
-            <%} %>
           </ul>
         </div>
+
+        <% } %> <% if (user && user.admin == 1) { %>
+        <div>
+          <button
+            type="button"
+            class="btn btn-sm btn-light dropdown-toggle"
+            data-toggle="dropdown"
+          >
+            Hi <%= user.username %>
+          </button>
+          <ul class="dropdown-menu">
+            <li>
+              <a href="/users/logout"> (log out)</a>
+            </li>
+            <li><a href="/admin/pages"> Admin Area</a></li>
+          </ul>
+        </div>
+        <% } %>
+
         <div class="btn-group mx-2">
           <button
             type="button"

@@ -1,17 +1,12 @@
-exports.isUser = (req, res, next) => {
-  if (req.isAuthenticated()) {
-    next();
-  } else {
-    req.flash("danger", "Please log in.");
-    res.redirect("/users/login");
+// authMiddleware.js
+function checkLoggedIn(req, res, next) {
+  const isLoggedIn = req.isAuthenticated() && req.user;
+  if (!isLoggedIn) {
+    return res.status(401).json({
+      error: "You must log in!",
+    });
   }
-};
+  next();
+}
 
-exports.isAdmin = (req, res, next) => {
-  if (req.isAuthenticated() && res.locals.user.admin == 1) {
-    next();
-  } else {
-    req.flash("danger", "Please log in as Admin.");
-    res.redirect("/users/login");
-  }
-};
+module.exports = { checkLoggedIn };
