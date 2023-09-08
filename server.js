@@ -13,7 +13,7 @@ const { addCategory, getAllCategory } = require("./models/category.mongo");
 const { getAllOffer, addOffer } = require("./models/offers.mongo");
 const { getAllReview, addReview } = require("./models/review.mongo");
 
-const { sendMail } = require("./auth/sendMail");
+const { sendMail } = require("./routes/sendMail");
 
 require("dotenv").config();
 const app = express();

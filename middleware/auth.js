@@ -1,45 +1,12 @@
-require("dotenv").config();
-const jwt = require("jsonwebtoken");
-const jwtSecret = process.env.JWTSECRET;
-
-exports.adminAuth = (req, res, next) => {
-  const token = req.cookies.jwt;
-  if (token) {
-    jwt.verify(token, jwtSecret, (err, decodedToken) => {
-      if (err) {
-        return res.status(401).json({ message: "Not authorized" });
-      } else {
-        if (decodedToken.role !== "admin") {
-          return res.status(401).json({ message: "Not authorized" });
-        } else {
-          next();
-        }
-      }
+// authMiddleware.js
+function checkLoggedIn(req, res, next) {
+  const isLoggedIn = req.isAuthenticated() && req.user;
+  if (!isLoggedIn) {
+    return res.status(401).json({
+      error: "You must log in!",
     });
-  } else {
-    return res
-      .status(401)
-      .json({ message: "Not authorized, token not available" });
   }
-};
+  next();
+}
 
-exports.userAuth = (req, res, next) => {
-  const token = req.cookies.jwt;
-  if (token) {
-    jwt.verify(token, jwtSecret, (err, decodedToken) => {
-      if (err) {
-        return res.status(401).json({ message: "Not authorized" });
-      } else {
-        if (decodedToken.role !== "Basic") {
-          return res.status(401).json({ message: "Not authorized" });
-        } else {
-          next();
-        }
-      }
-    });
-  } else {
-    return res
-      .status(401)
-      .json({ message: "Not authorized, token not available" });
-  }
-};
+module.exports = { checkLoggedIn };

@@ -13,7 +13,7 @@ router.get("/add/:product", (req, res, next) => {
         title: response.productName,
         qty: 1,
         price: response.productPrice,
-        image: "/img/" + response.productImage,
+        image: response.productImage,
       });
     } else {
       let cart = req.session.cart;
@@ -31,7 +31,7 @@ router.get("/add/:product", (req, res, next) => {
           title: response.productName,
           qty: 1,
           price: response.productPrice,
-          image: "/img/" + response.productImage,
+          image: response.productImage,
         });
       }
       console.log(cart);

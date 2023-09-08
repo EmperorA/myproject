@@ -48,7 +48,9 @@
                     <tbody class="align-middle">               
                          
                         <tr>         
-                            <td class="align-middle"><img src="<%= item.image %>.jpeg" alt="Product Image" alt="" style="width: 50px;"></td>
+                            <td class="align-middle"><img src="/img/<%= item.image %>.jpg"
+                        
+                                alt="Product Image" alt="" style="width: 50px;"></td>
                             <td class="align-middle"><%= item.title %></td>
                             <td class="align-middle">$<%= item.price %></td>
                             <td class="align-middle">
@@ -94,10 +96,11 @@
                                 <h5>$<%= total %></h5>
                             </div>
                             <br>
-                            <form action="https://www.paypal.com/us/cgi-bin/webscr" method="post">
-                                <input type="hidden" name="cmd" value="_xclick">
-                                 <input type="hidden" name="business" value="blinkaustine@gmail.com">
-                                 <input type="hidden" name="item_name" value="Item Name">
+                            <form action="https://www.sandbox.paypal.com/us/cgi-bin/webscr" method="post">
+                                <input type="hidden" name="cmd" value="_cart">
+                                <input type="hidden" name="item_name" value="1">
+                                 <input type="hidden" name="business" value="sb-vbphg27282066@business.example.com">
+                                
                                  <input type="hidden" name="currency_code" value="USD">
                                 <input type="hidden" name="amount" value="<%= total  %>">
                                 <input type="image" src="http://www.paypal.com/en_US/i/btn/x-click-but01.gif" name="submit" alt="Make payments with PayPal - it's fast, free and secure!">
