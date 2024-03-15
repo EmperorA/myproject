@@ -6,8 +6,8 @@ _RUNNING THIS REPO LOCALLY_
 
 **From the repo:**
 Clone this project locally
-Run npm install in your terminal / bash / command line
-Run npm run watch in your terminal / bash / command line
+Run npm install in your terminal / bash / command line to install all dependecies
+Run npm run watch in your terminal / bash / command line to start app.
 
 **DEV DEPENDENCIES**
 EJS
