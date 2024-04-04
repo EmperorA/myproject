@@ -2,7 +2,7 @@
 
 AUXShop is an HTML and Node.js based ecommerce responsive web app with essential commerce features. This is a demo ecommerce web app with features listed below.
 
-_RUNNING THIS REPO LOCALLY_
+#RUNNING THIS REPO LOCALLY
 
 **From the repo:**
 Clone this project locally
